@@ -4,11 +4,11 @@ The program is tested on ROS Fuerte, on a laptop computer with 2.5 GHz quad core
 
 Wiki Webpage: http://wiki.ros.org/demo_rgbd
 
-A slimmed down version of the code (without the bundle adjustment) is available for running on embedded systems
+A slimmed down version of the program (without the bundle adjustment) is available for running on embedded systems
 
 GitHub Code: https://github.com/jizhang-cmu/demo_rgbd_slimmed.git
 
-Another version of the program that uses a camera and a 3D lidar is available at
+Also, another version of the program that uses a camera and a 3D lidar is available at
 
 Wiki Webpage: http://wiki.ros.org/demo_lidar
 
