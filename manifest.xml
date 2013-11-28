@@ -1,0 +1,19 @@
+<package>
+  <description brief="demo_rgbd">
+
+     Depth Enhanced Monocular Odometry (RGBD camera version)
+
+  </description>
+  <author>Ji Zhang</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://wiki.ros.org/demo_rgbd</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="image_transport"/>
+  <depend package="pcl_ros"/>
+
+</package>
