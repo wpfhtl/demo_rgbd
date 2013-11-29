@@ -24,4 +24,4 @@ How to use:
 
 Datasets can be downloaded at: http://www.frc.ri.cmu.edu/~jizhang03
 
-Note: Camera intrinsic parameters (K matrices for rgb and depth images) are defined in the "src/cameraParameters.h" file. The current parameters are set at the default values for Xtion sensors.
+Note: Camera intrinsic parameters (K matrices for rgb and depth images) are defined in the "src/cameraParameters.h" file. The program does not use "/camera_info" messages in the data files. The current parameters are set at the default values for Xtion sensors.
