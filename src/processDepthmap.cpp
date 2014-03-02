@@ -22,9 +22,6 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr syncCloudArray[keepSyncCloudNum];
 int syncCloudInd = -1;
 int cloudRegInd = 0;
 
-int cloudCount = -1;
-const int cloudSkipNum = 5;
-
 pcl::PointCloud<pcl::PointXYZI>::Ptr depthCloud(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr tempCloud2(new pcl::PointCloud<pcl::PointXYZI>());
@@ -33,6 +30,9 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud3(new pcl::PointCloud<pcl::PointXYZ
 double timeRec = 0;
 double rxRec = 0, ryRec = 0, rzRec = 0;
 double txRec = 0, tyRec = 0, tzRec = 0;
+
+int cloudCount = -1;
+const int cloudSkipNum = 5;
 
 ros::Publisher *depthCloudPubPointer = NULL;
 
@@ -66,13 +66,13 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
   tyRec = voData->pose.pose.position.y;
   tzRec = voData->pose.pose.position.z;
 
-  float x1 = cos(yaw) * tx + sin(yaw) * tz;
-  float y1 = ty;
-  float z1 = -sin(yaw) * tx + cos(yaw) * tz;
+  double x1 = cos(yaw) * tx + sin(yaw) * tz;
+  double y1 = ty;
+  double z1 = -sin(yaw) * tx + cos(yaw) * tz;
 
-  float x2 = x1;
-  float y2 = cos(pitch) * y1 - sin(pitch) * z1;
-  float z2 = sin(pitch) * y1 + cos(pitch) * z1;
+  double x2 = x1;
+  double y2 = cos(pitch) * y1 - sin(pitch) * z1;
+  double z2 = sin(pitch) * y1 + cos(pitch) * z1;
 
   tx = cos(roll) * x2 + sin(roll) * y2;
   ty = -sin(roll) * x2 + cos(roll) * y2;
@@ -227,8 +227,8 @@ void syncCloudHandler(const sensor_msgs::Image::ConstPtr& syncCloud2)
     int xd = i % imageWidth;
     int yd = int(i / imageWidth);
 
-    float ud = (kDepth[2] - xd) / kDepth[0];
-    float vd = (kDepth[5] - yd) / kDepth[4];
+    double ud = (kDepth[2] - xd) / kDepth[0];
+    double vd = (kDepth[5] - yd) / kDepth[4];
 
     point.z = val;
     point.x = ud * val;
