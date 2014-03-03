@@ -142,10 +142,10 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
     downSizeFilter.filter(*surroundCloud);
     tempCloud->clear();
 
-    surroundCloud->header.frame_id = "/camera_init";
-    surroundCloud->header.stamp = voData->header.stamp;
     sensor_msgs::PointCloud2 surroundCloud2;
     pcl::toROSMsg(*surroundCloud, surroundCloud2);
+    surroundCloud2.header.frame_id = "/camera_init";
+    surroundCloud2.header.stamp = voData->header.stamp;
     surroundCloudPubPointer->publish(surroundCloud2);
   }
 
