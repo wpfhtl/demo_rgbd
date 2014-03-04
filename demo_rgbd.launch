@@ -8,6 +8,6 @@
   <node pkg="demo_rgbd" type="transformMaintenance" name="transformMaintenance" output="screen"/>
   <node pkg="demo_rgbd" type="registerPointCloud" name="registerPointCloud" output="screen"/>
 
-  <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find demo_rgbd)/demo_rgbd.vcg"/>
+  <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find demo_rgbd)/demo_rgbd.rviz"/>
 
 </launch>
