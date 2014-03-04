@@ -52,12 +52,12 @@ Visualization Manager:
       Transport Hint: raw
       Value: true
     - Class: rviz/Axes
-      Enabled: true
+      Enabled: false
       Length: 1
       Name: Camera
       Radius: 0.1
       Reference Frame: camera
-      Value: true
+      Value: false
     - Class: rviz/Axes
       Enabled: true
       Length: 1
@@ -66,19 +66,19 @@ Visualization Manager:
       Reference Frame: camera2
       Value: true
     - Class: rviz/Axes
-      Enabled: true
+      Enabled: false
       Length: 0.5
       Name: AfterMapped
       Radius: 0.12
       Reference Frame: aft_ba
-      Value: true
+      Value: false
     - Class: rviz/Axes
-      Enabled: true
+      Enabled: false
       Length: 1.5
       Name: CameraInit
       Radius: 0.1
       Reference Frame: camera_init
-      Value: true
+      Value: false
     - Angle Tolerance: 0.1
       Class: rviz/Odometry
       Color: 255; 25; 0
@@ -121,8 +121,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 3.81116
-        Min Value: 0.585798
+        Max Value: 10.8039
+        Min Value: 0.553559
         Value: true
       Axis: Z
       Channel Name: intensity
