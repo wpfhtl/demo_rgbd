@@ -130,8 +130,8 @@ void imageDataHandler(const sensor_msgs::Image::ConstPtr& imageData)
             featuresIndFromStart++;
           }
         }
-        totalFeatureNum += numToFind;
-        subregionFeatureNum[ind] += numToFind;
+        totalFeatureNum += numFound;
+        subregionFeatureNum[ind] += numFound;
 
         cvResetImageROI(imageLast);
       }
