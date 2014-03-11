@@ -17,7 +17,6 @@ CvSize imgSize = cvSize(imageWidth, imageHeight);
 
 IplImage *imageCur = cvCreateImage(imgSize, IPL_DEPTH_8U, 1);
 IplImage *imageLast = cvCreateImage(imgSize, IPL_DEPTH_8U, 1);
-IplImage *harrisLast = cvCreateImage(imgSize, IPL_DEPTH_32F, 1);
 
 int showCount = 0;
 const int showSkipNum = 2;
@@ -25,6 +24,7 @@ const int showDSRate = 2;
 CvSize showSize = cvSize(imageWidth / showDSRate, imageHeight / showDSRate);
 
 IplImage *imageShow = cvCreateImage(showSize, IPL_DEPTH_8U, 1);
+IplImage *harrisLast = cvCreateImage(showSize, IPL_DEPTH_32F, 1);
 
 CvMat kMat = cvMat(3, 3, CV_64FC1, kImage);
 
@@ -76,7 +76,9 @@ void imageDataHandler(const sensor_msgs::Image::ConstPtr& imageData)
   }
 
   //cvEqualizeHist(imageCur, imageCur);
-  cvCornerHarris(imageLast, harrisLast, 7);
+
+  cvResize(imageLast, imageShow);
+  cvCornerHarris(imageShow, harrisLast, 3);
 
   CvPoint2D32f *featuresTemp = featuresLast;
   featuresLast = featuresCur;
@@ -112,16 +114,10 @@ void imageDataHandler(const sensor_msgs::Image::ConstPtr& imageData)
           featuresLast[totalFeatureNum + k].x += subregionLeft;
           featuresLast[totalFeatureNum + k].y += subregionTop;
 
-          int xInd = (int)featuresLast[totalFeatureNum + k].x;
-          if (featuresLast[totalFeatureNum + k].x - xInd > 0.5) {
-            xInd++;
-          }
-          int yInd = (int)featuresLast[totalFeatureNum + k].y;
-          if (featuresLast[totalFeatureNum + k].y - yInd > 0.5) {
-            yInd++;
-          }
+          int xInd = (featuresLast[totalFeatureNum + k].x + 0.5) / showDSRate;
+          int yInd = (featuresLast[totalFeatureNum + k].y + 0.5) / showDSRate;
 
-          if (((float*)(harrisLast->imageData + harrisLast->widthStep * yInd))[xInd] > 1e-7) {
+          if (((float*)(harrisLast->imageData + harrisLast->widthStep * yInd))[xInd] > 1e-6) {
             featuresLast[totalFeatureNum + numFound].x = featuresLast[totalFeatureNum + k].x;
             featuresLast[totalFeatureNum + numFound].y = featuresLast[totalFeatureNum + k].y;
             featuresInd[totalFeatureNum + numFound] = featuresIndFromStart;
@@ -201,8 +197,6 @@ void imageDataHandler(const sensor_msgs::Image::ConstPtr& imageData)
 
   showCount = (showCount + 1) % (showSkipNum + 1);
   if (showCount == showSkipNum) {
-    cvResize(imageLast, imageShow);
-
     Mat imageShowMat(imageShow);
     bridge.image = imageShowMat;
     bridge.encoding = "mono8";
