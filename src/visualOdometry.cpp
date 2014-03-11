@@ -562,8 +562,8 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
   double z1 = transform[5];
 
   double x2 = x1;
-  double y2 = cos(rx + 0.035) * y1 - sin(rx + 0.035) * z1;
-  double z2 = sin(rx + 0.035) * y1 + cos(rx + 0.035) * z1;
+  double y2 = cos(rx + 0.025) * y1 - sin(rx + 0.025) * z1;
+  double z2 = sin(rx + 0.025) * y1 + cos(rx + 0.025) * z1;
 
   double tx = transformSum[3] - (cos(ry) * x2 + sin(ry) * z2);
   double ty = transformSum[4] - y2;
