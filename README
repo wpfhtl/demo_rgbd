@@ -24,4 +24,8 @@ How to use:
 
 Datasets can be downloaded at: http://www.frc.ri.cmu.edu/~jizhang03/projects.htm
 
-Note: Camera intrinsic parameters (K matrices for rgb and depth images) are defined in the "src/cameraParameters.h" file. The program does not use "/camera_info" messages in the data files. The current parameters are set at the default values for Xtion sensors.
+Notes: 
+  
+Camera intrinsic parameters (K matrices for rgb and depth images) are defined in the "src/cameraParameters.h" file. The program does not use "/camera_info" messages in the data files. The current parameters are set at the default values for Xtion sensors.
+
+The current program uses “/camera/rgb/image_rect” and “/camera/depth_registered/image” messages published by the “openni_camera” driver. Users can also remap from other messages such as “/camera/rgb/image” (for rgb images) and “/camera/depth/image” (for depth images). However, if using “/camera/depth/image”, pleases remember to change “kDepth” (K matrix for depth images) in the “cameraParameters.h” file to those in the “/camera/depth/camera_info” messages.
