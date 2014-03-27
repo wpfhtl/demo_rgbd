@@ -4,7 +4,7 @@
   <description>Depth Enhanced Monocular Odometry (RGBD camera version)</description>
   <maintainer email="zhangji@cmu.edu">Ji Zhang</maintainer>
   <url>http://wiki.ros.org/demo_rgbd</url>
-  <license>BSD</license>
+  <license>LGPL</license>
 
   <author>Ji Zhang</author>
 
