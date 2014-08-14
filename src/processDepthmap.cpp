@@ -18,18 +18,21 @@ const int imagePixelNum = imageHeight * imageWidth;
 
 const int keepSyncCloudNum = 5;
 double syncCloudTime[keepSyncCloudNum] = {0};
-pcl::PointCloud<pcl::PointXYZ>::Ptr syncCloudArray[keepSyncCloudNum];
+pcl::PointCloud<pcl::PointXYZI>::Ptr syncCloudArray[keepSyncCloudNum];
 int syncCloudInd = -1;
 int cloudRegInd = 0;
 
 pcl::PointCloud<pcl::PointXYZI>::Ptr depthCloud(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr tempCloud(new pcl::PointCloud<pcl::PointXYZI>());
 pcl::PointCloud<pcl::PointXYZI>::Ptr tempCloud2(new pcl::PointCloud<pcl::PointXYZI>());
-pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud3(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::PointCloud<pcl::PointXYZI>::Ptr tempCloud3(new pcl::PointCloud<pcl::PointXYZI>());
 
 double timeRec = 0;
 double rxRec = 0, ryRec = 0, rzRec = 0;
 double txRec = 0, tyRec = 0, tzRec = 0;
+
+bool systemInited = false;
+double initTime;
 
 int cloudCount = -1;
 const int cloudSkipNum = 5;
@@ -106,7 +109,9 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
       point.z = z2 - tz;
 
       double pointDis = sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
-      if (fabs(point.x / point.z) < 2 && fabs(point.y / point.z) < 1 && point.z > 0.3 && pointDis < 15) {
+      double timeDis = time - initTime - point.intensity;
+      if (fabs(point.x / point.z) < 2 && fabs(point.y / point.z) < 1 && point.z > 0.3 && pointDis < 15 &&  
+          timeDis <= 5.0) {
         tempCloud->push_back(point);
       }
     }
@@ -134,12 +139,10 @@ void voDataHandler(const nav_msgs::Odometry::ConstPtr& voData)
       double cosrz2 = cos(rz2);
       double sinrz2 = sin(rz2);
 
-      pcl::PointCloud<pcl::PointXYZ>::Ptr syncCloudPointer = syncCloudArray[cloudRegInd];
+      pcl::PointCloud<pcl::PointXYZI>::Ptr syncCloudPointer = syncCloudArray[cloudRegInd];
       int syncCloudNum = syncCloudPointer->points.size();
       for (int i = 0; i < syncCloudNum; i++) {
-        point.x = syncCloudPointer->points[i].x;
-        point.y = syncCloudPointer->points[i].y;
-        point.z = syncCloudPointer->points[i].z;
+        point = syncCloudPointer->points[i];
 
         x1 = cosry2 * point.x - sinry2 * point.z;
         y1 = point.y;
@@ -213,13 +216,19 @@ void syncCloudHandler(const sensor_msgs::Image::ConstPtr& syncCloud2)
     return;
   }
 
+  if (!systemInited) {
+    initTime = syncCloud2->header.stamp.toSec();
+    systemInited = true;
+  }
+
   double time = syncCloud2->header.stamp.toSec();
+  double timeLasted = time - initTime;
 
   syncCloudInd = (syncCloudInd + 1) % keepSyncCloudNum;
   syncCloudTime[syncCloudInd] = time;
 
   tempCloud3->clear();
-  pcl::PointXYZ point;
+  pcl::PointXYZI point;
   const float* syncCloud2Pointer = reinterpret_cast<const float*>(&syncCloud2->data[0]);
   for (int i = 0; i < imagePixelNum; i++) {
     float val = syncCloud2Pointer[i];
@@ -233,16 +242,17 @@ void syncCloudHandler(const sensor_msgs::Image::ConstPtr& syncCloud2)
     point.z = val;
     point.x = ud * val;
     point.y = vd * val;
+    point.intensity = timeLasted;
 
     if (point.z > 0.3 && point.z < 7) {
       tempCloud3->push_back(point);
     }
   }
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr syncCloudPointer = syncCloudArray[syncCloudInd];
+  pcl::PointCloud<pcl::PointXYZI>::Ptr syncCloudPointer = syncCloudArray[syncCloudInd];
   syncCloudPointer->clear();
 
-  pcl::VoxelGrid<pcl::PointXYZ> downSizeFilter;
+  pcl::VoxelGrid<pcl::PointXYZI> downSizeFilter;
   downSizeFilter.setInputCloud(tempCloud3);
   downSizeFilter.setLeafSize(0.1, 0.1, 0.1);
   downSizeFilter.filter(*syncCloudPointer);
@@ -254,7 +264,7 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
 
   for (int i = 0; i < keepSyncCloudNum; i++) {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr syncCloudTemp(new pcl::PointCloud<pcl::PointXYZ>());
+    pcl::PointCloud<pcl::PointXYZI>::Ptr syncCloudTemp(new pcl::PointCloud<pcl::PointXYZI>());
     syncCloudArray[i] = syncCloudTemp;
   }
 
