@@ -28,19 +28,19 @@ IplImage *harrisLast = cvCreateImage(showSize, IPL_DEPTH_32F, 1);
 
 CvMat kMat = cvMat(3, 3, CV_64FC1, kImage);
 
-const int maxFeatureNumPerSubregion = 20;
-const int xSubregionNum = 6;
-const int ySubregionNum = 4;
+const int maxFeatureNumPerSubregion = 2;
+const int xSubregionNum = 12;
+const int ySubregionNum = 8;
 const int totalSubregionNum = xSubregionNum * ySubregionNum;
 const int MAXFEATURENUM = maxFeatureNumPerSubregion * totalSubregionNum;
 
-const int xBoundary = 30;
-const int yBoundary = 30;
+const int xBoundary = 20;
+const int yBoundary = 20;
 const double subregionWidth = (double)(imageWidth - 2 * xBoundary) / (double)xSubregionNum;
 const double subregionHeight = (double)(imageHeight - 2 * yBoundary) / (double)ySubregionNum;
 
 const double maxTrackDis = 100;
-const int winSize = 21;
+const int winSize = 15;
 
 IplImage *imageEig, *imageTmp, *pyrCur, *pyrLast;
 
