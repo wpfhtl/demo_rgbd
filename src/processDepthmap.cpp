@@ -36,6 +36,7 @@ double initTime;
 
 int cloudCount = -1;
 const int cloudSkipNum = 5;
+const int cloudDSRate = 5;
 
 ros::Publisher *depthCloudPubPointer = NULL;
 
@@ -229,23 +230,37 @@ void syncCloudHandler(const sensor_msgs::Image::ConstPtr& syncCloud2)
 
   tempCloud3->clear();
   pcl::PointXYZI point;
+  double halfDSRate = cloudDSRate / 2.0 - 0.5;
   const float* syncCloud2Pointer = reinterpret_cast<const float*>(&syncCloud2->data[0]);
-  for (int i = 0; i < imagePixelNum; i++) {
-    float val = syncCloud2Pointer[i];
+  for (double i = halfDSRate; i < imageHeight; i += cloudDSRate) {
+    for (double j = halfDSRate; j < imageWidth; j += cloudDSRate) {
+      int pixelCount = 0;
+      float val, valSum = 0;
+      int is = int(i - halfDSRate), ie = int(i + halfDSRate);
+      int js = int(j - halfDSRate), je = int(j + halfDSRate);
+      for (int ii = is; ii <= ie; ii++) {
+        for (int jj = js; jj <= je; jj++) {
+          val = syncCloud2Pointer[ii * imageWidth + jj];
+          if (val > 0.3 && val < 7) {
+            valSum += val;
+            pixelCount++;
+          }
+        }
+      }
 
-    int xd = i % imageWidth;
-    int yd = int(i / imageWidth);
+      if (pixelCount > 0) {
+        double ud = (kDepth[2] - j) / kDepth[0];
+        double vd = (kDepth[5] - i) / kDepth[4];
 
-    double ud = (kDepth[2] - xd) / kDepth[0];
-    double vd = (kDepth[5] - yd) / kDepth[4];
+        val = valSum / pixelCount;
 
-    point.z = val;
-    point.x = ud * val;
-    point.y = vd * val;
-    point.intensity = timeLasted;
+        point.z = val;
+        point.x = ud * val;
+        point.y = vd * val;
+        point.intensity = timeLasted;
 
-    if (point.z > 0.3 && point.z < 7) {
-      tempCloud3->push_back(point);
+        tempCloud3->push_back(point);
+      }
     }
   }
 
