@@ -362,7 +362,7 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
     }
   }
 
-  int iterNum = 50;
+  int iterNum = 150;
   pcl::PointXYZHSV ipr2, ipr3, ipr4;
   int ipRelationsNum = ipRelations->points.size();
   int ptNumNoDepthRec = 0;
@@ -528,6 +528,19 @@ void imagePointsHandler(const sensor_msgs::PointCloud2ConstPtr& imagePoints2)
         transform[4] += matX.at<float>(4, 0);
         transform[5] += matX.at<float>(5, 0);
       //}
+
+      float deltaR = sqrt(matX.at<float>(0, 0) * 180 / PI * matX.at<float>(0, 0) * 180 / PI
+                   + matX.at<float>(1, 0) * 180 / PI * matX.at<float>(1, 0) * 180 / PI
+                   + matX.at<float>(2, 0) * 180 / PI * matX.at<float>(2, 0) * 180 / PI);
+      float deltaT = sqrt(matX.at<float>(3, 0) * 100 * matX.at<float>(3, 0) * 100
+                   + matX.at<float>(4, 0) * 100 * matX.at<float>(4, 0) * 100
+                   + matX.at<float>(5, 0) * 100 * matX.at<float>(5, 0) * 100);
+
+      if (deltaR < 0.0001 && deltaT < 0.0001) {
+        break;
+      }
+
+      //ROS_INFO ("iter: %d, deltaR: %f, deltaT: %f", iterCount, deltaR, deltaT);
     }
   }
 
